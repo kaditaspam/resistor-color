@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resistor Color Code Calc | Number Theory Ent.</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --text: #c9d1d9;
+            --accent: #238636;
+            /* Resistor Colors */
+            --black: #000000; --brown: #8b4513; --red: #ff0000;
+            --orange: #ffa500; --yellow: #ffff00; --green: #008000;
+            --blue: #0000ff; --violet: #ee82ee; --grey: #808080;
+            --white: #ffffff; --gold: #ffd700; --silver: #c0c0c0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .calc-container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Resistor Visual */
+        .resistor-display {
+            background: #d4a373; /* Resistor body color */
+            height: 60px;
+            width: 240px;
+            margin: 30px auto;
+            border-radius: 30px;
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .band {
+            width: 15px;
+            height: 100%;
+            transition: background 0.3s;
+        }
+
+        .result-box {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #fff;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            background: #21262d;
+            color: white;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calc-container">
+    <h2>Resistor Color Calculator</h2>
+    
+    <div class="resistor-display">
+        <div id="visual-band1" class="band" style="background: brown;"></div>
+        <div id="visual-band2" class="band" style="background: black;"></div>
+        <div id="visual-multi" class="band" style="background: red;"></div>
+        <div id="visual-tol" class="band" style="background: gold;"></div>
+    </div>
+
+    <div class="result-box" id="total-resistance">1.0 kΩ ± 5%</div>
+
+    <div class="controls">
+        <div>
+            <label>1st Band (Digit)</label>
+            <select id="band1" onchange="calculate()">
+                <option value="0" style="background:black; color:white;">Black (0)</option>
+                <option value="1" selected style="background:brown; color:white;">Brown (1)</option>
+                <option value="2" style="background:red; color:white;">Red (2)</option>
+                <option value="3" style="background:orange;">Orange (3)</option>
+                <option value="4" style="background:yellow;">Yellow (4)</option>
+                <option value="5" style="background:green; color:white;">Green (5)</option>
+                <option value="6" style="background:blue; color:white;">Blue (6)</option>
+                <option value="7" style="background:violet;">Violet (7)</option>
+                <option value="8" style="background:grey;">Grey (8)</option>
+                <option value="9" style="background:white; color:black;">White (9)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>2nd Band (Digit)</label>
+            <select id="band2" onchange="calculate()">
+                <option value="0" selected style="background:black; color:white;">Black (0)</option>
+                <option value="1" style="background:brown; color:white;">Brown (1)</option>
+                <option value="2" style="background:red; color:white;">Red (2)</option>
+                <option value="3" style="background:orange;">Orange (3)</option>
+                <option value="4" style="background:yellow;">Yellow (4)</option>
+                <option value="5" style="background:green; color:white;">Green (5)</option>
+                <option value="6" style="background:blue; color:white;">Blue (6)</option>
+                <option value="7" style="background:violet;">Violet (7)</option>
+                <option value="8" style="background:grey;">Grey (8)</option>
+                <option value="9" style="background:white; color:black;">White (9)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Multiplier</label>
+            <select id="multi" onchange="calculate()">
+                <option value="1" style="background:black; color:white;">Black (x1)</option>
+                <option value="10" style="background:brown; color:white;">Brown (x10)</option>
+                <option value="100" selected style="background:red; color:white;">Red (x100)</option>
+                <option value="1000" style="background:orange;">Orange (x1k)</option>
+                <option value="10000" style="background:yellow;">Yellow (x10k)</option>
+                <option value="100000" style="background:green; color:white;">Green (x100k)</option>
+                <option value="1000000" style="background:blue; color:white;">Blue (x1M)</option>
+                <option value="0.1" style="background:gold;">Gold (x0.1)</option>
+                <option value="0.01" style="background:silver;">Silver (x0.01)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Tolerance</label>
+            <select id="tol" onchange="calculate()">
+                <option value="1" style="background:brown; color:white;">Brown (±1%)</option>
+                <option value="2" style="background:red; color:white;">Red (±2%)</option>
+                <option value="5" selected style="background:gold;">Gold (±5%)</option>
+                <option value="10" style="background:silver;">Silver (±10%)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // Get values
+        const b1 = document.getElementById('band1').value;
+        const b2 = document.getElementById('band2').value;
+        const m = document.getElementById('multi').value;
+        const t = document.getElementById('tol').value;
+
+        // Calculate Ohms
+        let ohms = (parseInt(b1 + b2)) * parseFloat(m);
+        let displayValue = ohms;
+        let unit = "Ω";
+
+        // Convert to k or M if needed
+        if (ohms >= 1000000) {
+            displayValue = ohms / 1000000;
+            unit = "MΩ";
+        } else if (ohms >= 1000) {
+            displayValue = ohms / 1000;
+            unit = "kΩ";
+        }
+
+        // Update Text
+        document.getElementById('total-resistance').innerText = `${displayValue} ${unit} ± ${t}%`;
+
+        // Update Visual Colors
+        updateColor('visual-band1', 'band1');
+        updateColor('visual-band2', 'band2');
+        updateColor('visual-multi', 'multi');
+        updateColor('visual-tol', 'tol');
+    }
+
+    function updateColor(visualId, selectId) {
+        const select = document.getElementById(selectId);
+        const color = select.options[select.selectedIndex].style.background;
+        document.getElementById(visualId).style.background = color;
+    }
+
+    // Initial run
+    calculate();
+</script>
+
+</body>
+</html>
