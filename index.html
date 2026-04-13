@@ -3,52 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4-Band Resistor Lab | Number Theory Ent.</title>
+    <title>Resistor Lab | Dark Edition</title>
     <style>
-        :root {
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --box-bg: #f1f5f9;
-            --accent: #2563eb;
-        }
-
+        /* 1. THE BLACK BACKGROUND */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: #000000; /* Deep black outside */
+            color: #ffffff;
+            font-family: 'Inter', -apple-system, sans-serif;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
         }
 
+        /* 2. THE WHITE MIDDLE (The Calculator) */
         .container {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            background: #ffffff; /* White middle section */
+            color: #1a1a2e;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
             max-width: 800px;
             width: 100%;
-            border: 1px solid #e2e8f0;
+            position: relative; /* Essential for the profile pic */
         }
 
-        /* Resistor Body */
+        /* 3. THE PROFILE PICTURE (Lower Right) */
+        .dev-stamp {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 75px;
+            height: 75px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* RESISTOR VISUAL */
         .resistor-display {
             background: #e9c46a;
             height: 80px;
-            width: 300px;
-            margin: 40px auto;
+            width: 320px;
+            margin: 30px auto;
             border-radius: 40px;
             display: flex;
             justify-content: space-evenly;
             align-items: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
 
-        .band { width: 25px; height: 100%; transition: background 0.3s ease; }
+        .band { width: 22px; height: 100%; transition: 0.3s; }
 
-        /* Results Display */
+        /* RESULT BOXES */
         .results-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -57,26 +67,20 @@
         }
 
         .result-item { text-align: center; }
-        .result-label { font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; color: #64748b; text-transform: uppercase; }
         .result-value {
-            background: var(--box-bg);
+            background: #f1f5f9;
             padding: 15px;
             border-radius: 8px;
-            font-weight: 700;
-            border: 1px solid #e2e8f0;
+            font-weight: 800;
             font-size: 1.1rem;
+            border: 1px solid #cbd5e1;
         }
 
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
         }
-
-        .full-width { grid-column: span 2; }
 
         select, button {
             width: 100%;
@@ -84,99 +88,67 @@
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             font-size: 1rem;
-            cursor: pointer;
         }
 
         button {
-            background: var(--accent);
+            grid-column: span 2;
+            background: #1a1a2e;
             color: white;
             border: none;
             font-weight: bold;
+            cursor: pointer;
             margin-top: 10px;
         }
 
-        label { font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; display: block; }
+        label { font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; display: block; color: #64748b; }
     </style>
 </head>
 <body>
 
 <div class="container" id="capture-area">
-    <h2 style="text-align: center; margin-top: 0;">4-Band Resistor Calculator</h2>
+    <h2 style="text-align: center; margin-top: 0;">Resistor Color Lab</h2>
     
+    <img src="profile.jpg" class="dev-stamp" alt="Dev Photo">
+
     <div class="resistor-display">
         <div id="v-b1" class="band"></div>
         <div id="v-b2" class="band"></div>
-        <div style="width: 40px;"></div> <div id="v-multi" class="band"></div>
+        <div style="width: 30px;"></div> <div id="v-multi" class="band"></div>
         <div id="v-tol" class="band"></div>
     </div>
 
     <div class="results-grid">
-        <div class="result-item">
-            <div class="result-label">Resistance</div>
-            <div class="result-value" id="res-val">---</div>
-        </div>
-        <div class="result-item">
-            <div class="result-label">Minimum</div>
-            <div class="result-value" id="min-val">---</div>
-        </div>
-        <div class="result-item">
-            <div class="result-label">Maximum</div>
-            <div class="result-value" id="max-val">---</div>
-        </div>
+        <div class="result-item"><label>Resistance</label><div class="result-value" id="res">---</div></div>
+        <div class="result-item"><label>Minimum</label><div class="result-value" id="min">---</div></div>
+        <div class="result-item"><label>Maximum</label><div class="result-value" id="max">---</div></div>
     </div>
 
     <div class="controls">
         <div>
-            <label>1st Digit Band</label>
-            <select id="b1" onchange="calc()">
-                <option value="0">Black (0)</option><option value="1" selected>Brown (1)</option>
-                <option value="2">Red (2)</option><option value="3">Orange (3)</option>
-                <option value="4">Yellow (4)</option><option value="5">Green (5)</option>
-                <option value="6">Blue (6)</option><option value="7">Violet (7)</option>
-                <option value="8">Grey (8)</option><option value="9">White (9)</option>
-            </select>
+            <label>Band 1</label>
+            <select id="b1" onchange="calc()"><option value="1">Brown</option><option value="2">Red</option><option value="4">Yellow</option></select>
         </div>
         <div>
-            <label>2nd Digit Band</label>
-            <select id="b2" onchange="calc()">
-                <option value="0" selected>Black (0)</option><option value="1">Brown (1)</option>
-                <option value="2">Red (2)</option><option value="3">Orange (3)</option>
-                <option value="4">Yellow (4)</option><option value="5">Green (5)</option>
-                <option value="6">Blue (6)</option><option value="7">Violet (7)</option>
-                <option value="8">Grey (8)</option><option value="9">White (9)</option>
-            </select>
+            <label>Band 2</label>
+            <select id="b2" onchange="calc()"><option value="0">Black</option><option value="2">Red</option></select>
         </div>
         <div>
             <label>Multiplier</label>
-            <select id="multi" onchange="calc()">
-                <option value="0.01">Silver (x0.01)</option><option value="0.1">Gold (x0.1)</option>
-                <option value="1">Black (x1)</option><option value="10">Brown (x10)</option>
-                <option value="100" selected>Red (x100)</option><option value="1000">Orange (x1k)</option>
-                <option value="10000">Yellow (x10k)</option><option value="100000">Green (x100k)</option>
-                <option value="1000000">Blue (x1M)</option>
-            </select>
+            <select id="multi" onchange="calc()"><option value="100">Red (x100)</option><option value="1000">Orange (x1k)</option></select>
         </div>
         <div>
             <label>Tolerance</label>
-            <select id="tol" onchange="calc()">
-                <option value="5" selected>Gold (±5%)</option><option value="10">Silver (±10%)</option>
-                <option value="1">Brown (±1%)</option><option value="2">Red (±2%)</option>
-            </select>
+            <select id="tol" onchange="calc()"><option value="5">Gold (±5%)</option><option value="10">Silver (±10%)</option></select>
         </div>
-        
-        <button class="full-width" onclick="saveImage()">Download PNG Report</button>
+        <button onclick="save()">Save PNG Report</button>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script>
-    const colors = {
-        "0": "#000", "1": "#8B4513", "2": "#F00", "3": "#FF8C00", "4": "#FF0",
-        "5": "#228B22", "6": "#00F", "7": "#9400D3", "8": "#808080", "9": "#FFF"
-    };
-    const multiColors = {"0.01": "#C0C0C0", "0.1": "#FFD700", "1": "#000", "10": "#8B4513", "100": "#F00", "1000": "#FF8C00", "10000": "#FF0", "100000": "#228B22", "1000000": "#00F"};
-    const tolColors = {"5": "#FFD700", "10": "#C0C0C0", "1": "#8B4513", "2": "#F00"};
+    const colors = {"0":"#000","1":"#8B4513","2":"#F00","3":"#FF8C00","4":"#FF0","5":"#228B22","6":"#00F","7":"#9400D3","8":"#808080","9":"#FFF"};
+    const multis = {"100":"#F00","1000":"#FF8C00"};
+    const tols = {"5":"#FFD700","10":"#C0C0C0"};
 
     function calc() {
         const v1 = document.getElementById('b1').value;
@@ -187,35 +159,25 @@
         const ohms = parseInt(v1 + v2) * m;
         const range = ohms * (t / 100);
 
-        document.getElementById('res-val').innerText = format(ohms) + " ±" + t + "%";
-        document.getElementById('min-val').innerText = format(ohms - range);
-        document.getElementById('max-val').innerText = format(ohms + range);
+        document.getElementById('res').innerText = (ohms/1000).toFixed(1) + " kΩ";
+        document.getElementById('min').innerText = ((ohms-range)/1000).toFixed(2) + " kΩ";
+        document.getElementById('max').innerText = ((ohms+range)/1000).toFixed(2) + " kΩ";
 
         document.getElementById('v-b1').style.background = colors[v1];
         document.getElementById('v-b2').style.background = colors[v2];
-        document.getElementById('v-multi').style.background = multiColors[m];
-        document.getElementById('v-tol').style.background = tolColors[t];
+        document.getElementById('v-multi').style.background = multis[m];
+        document.getElementById('v-tol').style.background = tols[t];
     }
 
-    function format(num) {
-        if (num >= 1000000) return (num/1000000).toFixed(2) + " MΩ";
-        if (num >= 1000) return (num/1000).toFixed(2) + " kΩ";
-        return num.toFixed(1) + " Ω";
-    }
-
-    function saveImage() {
-        const btn = document.querySelector('button');
-        btn.style.visibility = 'hidden';
+    function save() {
         html2canvas(document.querySelector("#capture-area")).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'resistor-calc.png';
+            link.download = 'lab-report.png';
             link.href = canvas.toDataURL();
             link.click();
-            btn.style.visibility = 'visible';
         });
     }
     calc();
 </script>
-
 </body>
 </html>
