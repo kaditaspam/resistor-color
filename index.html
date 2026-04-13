@@ -3,152 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resistor Lab | Dark Edition</title>
+    <title>Resistor Lab | Number Theory Ent.</title>
     <style>
-        /* 1. THE BLACK BACKGROUND */
+        :root {
+            --bg: #000000;
+            --card: #ffffff;
+            --text: #1e293b;
+            --box-bg: #f1f5f9;
+            --accent: #0f172a;
+        }
+
         body {
-            background-color: #000000; /* Deep black outside */
-            color: #ffffff;
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
         }
 
-        /* 2. THE WHITE MIDDLE (The Calculator) */
         .container {
-            background: #ffffff; /* White middle section */
-            color: #1a1a2e;
+            background: var(--card);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
-            max-width: 800px;
+            box-shadow: 0 0 40px rgba(255,255,255,0.05);
+            max-width: 850px;
             width: 100%;
-            position: relative; /* Essential for the profile pic */
+            border: 1px solid #334155;
         }
 
-        /* 3. THE PROFILE PICTURE (Lower Right) */
-        .dev-stamp {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 75px;
-            height: 75px;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            object-fit: cover;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        /* RESISTOR VISUAL */
         .resistor-display {
             background: #e9c46a;
-            height: 80px;
-            width: 320px;
-            margin: 30px auto;
-            border-radius: 40px;
+            height: 90px;
+            width: 340px;
+            margin: 20px auto 40px;
+            border-radius: 45px;
             display: flex;
             justify-content: space-evenly;
             align-items: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.15);
         }
 
-        .band { width: 22px; height: 100%; transition: 0.3s; }
+        .band { width: 25px; height: 100%; transition: background 0.3s ease; }
 
-        /* RESULT BOXES */
         .results-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin: 30px 0;
+            margin-bottom: 30px;
         }
 
         .result-item { text-align: center; }
+        .result-label { font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; color: #64748b; text-transform: uppercase; }
         .result-value {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--box-bg);
+            padding: 18px;
+            border-radius: 10px;
             font-weight: 800;
+            border: 1px solid #e2e8f0;
             font-size: 1.1rem;
-            border: 1px solid #cbd5e1;
+            color: #0f172a;
         }
 
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 14px;
         }
+
+        .full-width { grid-column: span 2; }
 
         select, button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            background: white;
         }
 
         button {
-            grid-column: span 2;
-            background: #1a1a2e;
+            background: var(--accent);
             color: white;
             border: none;
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.2s;
         }
 
-        label { font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; display: block; color: #64748b; }
+        button:hover { opacity: 0.9; }
+
+        label { font-size: 0.75rem; font-weight: 800; margin-bottom: 6px; display: block; color: #475569; }
     </style>
 </head>
 <body>
 
 <div class="container" id="capture-area">
-    <h2 style="text-align: center; margin-top: 0;">Resistor Color Lab</h2>
+    <h2 style="text-align: center; margin-top: 0; font-weight: 800; letter-spacing: -1px;">Resistor Color Lab</h2>
     
-    <img src="profile.jpg" class="dev-stamp" alt="Dev Photo">
-
     <div class="resistor-display">
         <div id="v-b1" class="band"></div>
         <div id="v-b2" class="band"></div>
-        <div style="width: 30px;"></div> <div id="v-multi" class="band"></div>
+        <div style="width: 50px;"></div> 
+        <div id="v-multi" class="band"></div>
         <div id="v-tol" class="band"></div>
     </div>
 
     <div class="results-grid">
-        <div class="result-item"><label>Resistance</label><div class="result-value" id="res">---</div></div>
-        <div class="result-item"><label>Minimum</label><div class="result-value" id="min">---</div></div>
-        <div class="result-item"><label>Maximum</label><div class="result-value" id="max">---</div></div>
+        <div class="result-item">
+            <div class="result-label">Resistance</div>
+            <div class="result-value" id="res-val">---</div>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Minimum</div>
+            <div class="result-value" id="min-val">---</div>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Maximum</div>
+            <div class="result-value" id="max-val">---</div>
+        </div>
     </div>
 
     <div class="controls">
         <div>
-            <label>Band 1</label>
-            <select id="b1" onchange="calc()"><option value="1">Brown</option><option value="2">Red</option><option value="4">Yellow</option></select>
+            <label>1st Digit Band</label>
+            <select id="b1" onchange="calc()">
+                <option value="0">Black (0)</option><option value="1" selected>Brown (1)</option>
+                <option value="2">Red (2)</option><option value="3">Orange (3)</option>
+                <option value="4">Yellow (4)</option><option value="5">Green (5)</option>
+                <option value="6">Blue (6)</option><option value="7">Violet (7)</option>
+                <option value="8">Grey (8)</option><option value="9">White (9)</option>
+            </select>
         </div>
         <div>
-            <label>Band 2</label>
-            <select id="b2" onchange="calc()"><option value="0">Black</option><option value="2">Red</option></select>
+            <label>2nd Digit Band</label>
+            <select id="b2" onchange="calc()">
+                <option value="0" selected>Black (0)</option><option value="1">Brown (1)</option>
+                <option value="2">Red (2)</option><option value="3">Orange (3)</option>
+                <option value="4">Yellow (4)</option><option value="5">Green (5)</option>
+                <option value="6">Blue (6)</option><option value="7">Violet (7)</option>
+                <option value="8">Grey (8)</option><option value="9">White (9)</option>
+            </select>
         </div>
         <div>
             <label>Multiplier</label>
-            <select id="multi" onchange="calc()"><option value="100">Red (x100)</option><option value="1000">Orange (x1k)</option></select>
+            <select id="multi" onchange="calc()">
+                <option value="0.01">Silver (x0.01)</option><option value="0.1">Gold (x0.1)</option>
+                <option value="1">Black (x1)</option><option value="10">Brown (x10)</option>
+                <option value="100" selected>Red (x100)</option><option value="1000">Orange (x1k)</option>
+                <option value="10000">Yellow (x10k)</option><option value="100000">Green (x100k)</option>
+                <option value="1000000">Blue (x1M)</option>
+            </select>
         </div>
         <div>
             <label>Tolerance</label>
-            <select id="tol" onchange="calc()"><option value="5">Gold (±5%)</option><option value="10">Silver (±10%)</option></select>
+            <select id="tol" onchange="calc()">
+                <option value="10">Silver (±10%)</option><option value="5" selected>Gold (±5%)</option>
+                <option value="1">Brown (±1%)</option><option value="2">Red (±2%)</option>
+                <option value="0.5">Green (±0.5%)</option><option value="0.25">Blue (±0.25%)</option>
+                <option value="0.1">Violet (±0.1%)</option>
+            </select>
         </div>
-        <button onclick="save()">Save PNG Report</button>
+        
+        <button class="full-width" onclick="saveImage()">Download PNG Report</button>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
-    const colors = {"0":"#000","1":"#8B4513","2":"#F00","3":"#FF8C00","4":"#FF0","5":"#228B22","6":"#00F","7":"#9400D3","8":"#808080","9":"#FFF"};
-    const multis = {"100":"#F00","1000":"#FF8C00"};
-    const tols = {"5":"#FFD700","10":"#C0C0C0"};
+    const colors = {
+        "0": "#000000", "1": "#8B4513", "2": "#FF0000", "3": "#FF8C00", "4": "#FFFF00",
+        "5": "#228B22", "6": "#0000FF", "7": "#9400D3", "8": "#808080", "9": "#FFFFFF"
+    };
+    
+    const multiColors = {
+        "0.01": "#C0C0C0", "0.1": "#FFD700", "1": "#000000", "10": "#8B4513", 
+        "100": "#FF0000", "1000": "#FF8C00", "10000": "#FFFF00", "100000": "#228B22", "1000000": "#0000FF"
+    };
+
+    const tolColors = {
+        "10": "#C0C0C0", "5": "#FFD700", "1": "#8B4513", "2": "#FF0000", 
+        "0.5": "#228B22", "0.25": "#0000FF", "0.1": "#9400D3"
+    };
 
     function calc() {
         const v1 = document.getElementById('b1').value;
@@ -159,25 +205,26 @@
         const ohms = parseInt(v1 + v2) * m;
         const range = ohms * (t / 100);
 
-        document.getElementById('res').innerText = (ohms/1000).toFixed(1) + " kΩ";
-        document.getElementById('min').innerText = ((ohms-range)/1000).toFixed(2) + " kΩ";
-        document.getElementById('max').innerText = ((ohms+range)/1000).toFixed(2) + " kΩ";
+        document.getElementById('res-val').innerText = format(ohms) + " ±" + t + "%";
+        document.getElementById('min-val').innerText = format(ohms - range);
+        document.getElementById('max-val').innerText = format(ohms + range);
 
         document.getElementById('v-b1').style.background = colors[v1];
         document.getElementById('v-b2').style.background = colors[v2];
-        document.getElementById('v-multi').style.background = multis[m];
-        document.getElementById('v-tol').style.background = tols[t];
+        document.getElementById('v-multi').style.background = multiColors[m];
+        document.getElementById('v-tol').style.background = tolColors[t];
     }
 
-    function save() {
+    function format(num) {
+        if (num >= 1000000) return (num/1000000).toFixed(2) + " MΩ";
+        if (num >= 1000) return (num/1000).toFixed(2) + " kΩ";
+        return num.toFixed(1) + " Ω";
+    }
+
+    function saveImage() {
+        const btn = document.querySelector('button');
+        btn.style.visibility = 'hidden';
         html2canvas(document.querySelector("#capture-area")).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'lab-report.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }
-    calc();
-</script>
-</body>
-</html>
+            link.download = 'resistor-report.png';
+            link.href = canvas
