@@ -187,6 +187,7 @@
                 <option value="0.5">Green (±0.5%)</option>
                 <option value="0.25">Blue (±0.25%)</option>
                 <option value="0.1">Violet (±0.1%)</option>
+                <option value="0.05">Grey (±0.05%)</option>
             </select>
         </div>
         <button class="full-width" onclick="saveImage()">Download PNG Report</button>
@@ -208,7 +209,7 @@
 
     const tolColors = {
         "10": "#C0C0C0", "5": "#FFD700", "1": "#8B4513", "2": "#FF0000", 
-        "0.5": "#228B22", "0.25": "#0000FF", "0.1": "#9400D3"
+        "0.5": "#228B22", "0.25": "#0000FF", "0.1": "#9400D3", "0.05": "#808080"
     };
 
     function calc() {
@@ -227,13 +228,13 @@
         document.getElementById('v-b1').style.background = colors[b1];
         document.getElementById('v-b2').style.background = colors[b2];
         document.getElementById('v-multi').style.background = multiColors[m];
-        document.getElementById('v-tol').style.background = tolColors[t];
+        document.getElementById('v-tol').style.background = tolColors[t.toString()];
     }
 
     function format(num) {
         if (num >= 1000000) return (num/1000000).toFixed(2) + " MΩ";
         if (num >= 1000) return (num/1000).toFixed(2) + " kΩ";
-        return num.toFixed(1) + " Ω";
+        return num.toFixed(2) + " Ω";
     }
 
     function saveImage() {
@@ -248,7 +249,7 @@
         });
     }
 
-    // Initialize on load
+    // Set initial colors on load
     window.onload = calc;
 </script>
 
