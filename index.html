@@ -101,7 +101,6 @@
         }
 
         button:hover { opacity: 0.9; }
-
         label { font-size: 0.75rem; font-weight: 800; margin-bottom: 6px; display: block; color: #475569; }
     </style>
 </head>
@@ -137,43 +136,59 @@
         <div>
             <label>1st Digit Band</label>
             <select id="b1" onchange="calc()">
-                <option value="0">Black (0)</option><option value="1" selected>Brown (1)</option>
-                <option value="2">Red (2)</option><option value="3">Orange (3)</option>
-                <option value="4">Yellow (4)</option><option value="5">Green (5)</option>
-                <option value="6">Blue (6)</option><option value="7">Violet (7)</option>
-                <option value="8">Grey (8)</option><option value="9">White (9)</option>
+                <option value="0">Black (0)</option>
+                <option value="1" selected>Brown (1)</option>
+                <option value="2">Red (2)</option>
+                <option value="3">Orange (3)</option>
+                <option value="4">Yellow (4)</option>
+                <option value="5">Green (5)</option>
+                <option value="6">Blue (6)</option>
+                <option value="7">Violet (7)</option>
+                <option value="8">Grey (8)</option>
+                <option value="9">White (9)</option>
             </select>
         </div>
         <div>
             <label>2nd Digit Band</label>
             <select id="b2" onchange="calc()">
-                <option value="0" selected>Black (0)</option><option value="1">Brown (1)</option>
-                <option value="2">Red (2)</option><option value="3">Orange (3)</option>
-                <option value="4">Yellow (4)</option><option value="5">Green (5)</option>
-                <option value="6">Blue (6)</option><option value="7">Violet (7)</option>
-                <option value="8">Grey (8)</option><option value="9">White (9)</option>
+                <option value="0" selected>Black (0)</option>
+                <option value="1">Brown (1)</option>
+                <option value="2">Red (2)</option>
+                <option value="3">Orange (3)</option>
+                <option value="4">Yellow (4)</option>
+                <option value="5">Green (5)</option>
+                <option value="6">Blue (6)</option>
+                <option value="7">Violet (7)</option>
+                <option value="8">Grey (8)</option>
+                <option value="9">White (9)</option>
             </select>
         </div>
         <div>
             <label>Multiplier</label>
             <select id="multi" onchange="calc()">
-                <option value="0.01">Silver (x0.01)</option><option value="0.1">Gold (x0.1)</option>
-                <option value="1">Black (x1)</option><option value="10">Brown (x10)</option>
-                <option value="100" selected>Red (x100)</option><option value="1000">Orange (x1k)</option>
-                <option value="10000">Yellow (x10k)</option><option value="100000">Green (x100k)</option>
+                <option value="0.01">Silver (x0.01)</option>
+                <option value="0.1">Gold (x0.1)</option>
+                <option value="1">Black (x1)</option>
+                <option value="10">Brown (x10)</option>
+                <option value="100" selected>Red (x100)</option>
+                <option value="1000">Orange (x1k)</option>
+                <option value="10000">Yellow (x10k)</option>
+                <option value="100000">Green (x100k)</option>
                 <option value="1000000">Blue (x1M)</option>
             </select>
         </div>
         <div>
             <label>Tolerance</label>
             <select id="tol" onchange="calc()">
-                <option value="10">Silver (±10%)</option><option value="5" selected>Gold (±5%)</option>
-                <option value="1">Brown (±1%)</option><option value="2">Red (±2%)</option>
-                <option value="0.5">Green (±0.5%)</option><option value="0.25">Blue (±0.25%)</option>
+                <option value="10">Silver (±10%)</option>
+                <option value="5" selected>Gold (±5%)</option>
+                <option value="1">Brown (±1%)</option>
+                <option value="2">Red (±2%)</option>
+                <option value="0.5">Green (±0.5%)</option>
+                <option value="0.25">Blue (±0.25%)</option>
                 <option value="0.1">Violet (±0.1%)</option>
             </select>
         </div>
-        
         <button class="full-width" onclick="saveImage()">Download PNG Report</button>
     </div>
 </div>
@@ -197,20 +212,20 @@
     };
 
     function calc() {
-        const v1 = document.getElementById('b1').value;
-        const v2 = document.getElementById('b2').value;
+        const b1 = document.getElementById('b1').value;
+        const b2 = document.getElementById('b2').value;
         const m = parseFloat(document.getElementById('multi').value);
         const t = parseFloat(document.getElementById('tol').value);
 
-        const ohms = parseInt(v1 + v2) * m;
+        const ohms = parseInt(b1 + b2) * m;
         const range = ohms * (t / 100);
 
         document.getElementById('res-val').innerText = format(ohms) + " ±" + t + "%";
         document.getElementById('min-val').innerText = format(ohms - range);
         document.getElementById('max-val').innerText = format(ohms + range);
 
-        document.getElementById('v-b1').style.background = colors[v1];
-        document.getElementById('v-b2').style.background = colors[v2];
+        document.getElementById('v-b1').style.background = colors[b1];
+        document.getElementById('v-b2').style.background = colors[b2];
         document.getElementById('v-multi').style.background = multiColors[m];
         document.getElementById('v-tol').style.background = tolColors[t];
     }
@@ -227,4 +242,15 @@
         html2canvas(document.querySelector("#capture-area")).then(canvas => {
             const link = document.createElement('a');
             link.download = 'resistor-report.png';
-            link.href = canvas
+            link.href = canvas.toDataURL();
+            link.click();
+            btn.style.visibility = 'visible';
+        });
+    }
+
+    // Initialize on load
+    window.onload = calc;
+</script>
+
+</body>
+</html>
